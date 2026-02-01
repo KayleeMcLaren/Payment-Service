@@ -1,4 +1,4 @@
-### Create Payment
+### Create Payment - Valid
 POST http://localhost:8080/api/v1/payments
 Content-Type: application/json
 
@@ -10,19 +10,37 @@ Content-Type: application/json
   "description": "Payment for services"
 }
 
+### Create Payment - Another One
+POST http://localhost:8080/api/v1/payments
+Content-Type: application/json
+
+{
+  "amount": 250.75,
+  "currency": "EUR",
+  "senderId": "user789",
+  "recipientId": "user123",
+  "description": "Invoice payment"
+}
+
 ### Get All Payments
 GET http://localhost:8080/api/v1/payments
 
 ### Get Payment by ID
 GET http://localhost:8080/api/v1/payments/1
 
-### Filter by Status
+### Filter by Status - PENDING
 GET http://localhost:8080/api/v1/payments?status=PENDING
 
-### Update Payment Status
-PATCH http://localhost:8080/api/v1/payments/3/status?status=COMPLETED
+### Filter by Status - COMPLETED
+GET http://localhost:8080/api/v1/payments?status=COMPLETED
 
-### Test Validation Error
+### Update Payment Status
+PATCH http://localhost:8080/api/v1/payments/1/status?status=COMPLETED
+
+### Delete Payment
+DELETE http://localhost:8080/api/v1/payments/2
+
+### Test Validation Error - Invalid Amount
 POST http://localhost:8080/api/v1/payments
 Content-Type: application/json
 
@@ -33,8 +51,5 @@ Content-Type: application/json
   "recipientId": "user456"
 }
 
-### Test Not Found
-GET http://localhost:8080/api/v1/payments/999
-
-### Delete Payment
-DELETE http://localhost:8080/api/v1/payments/3
+### Test Not Found Error
+GET http://localhost:8080/api/v1/payments/999:8080/api/v1/payments/3
