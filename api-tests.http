@@ -1,0 +1,40 @@
+### Create Payment
+POST http://localhost:8080/api/v1/payments
+Content-Type: application/json
+
+{
+  "amount": 100.50,
+  "currency": "USD",
+  "senderId": "user123",
+  "recipientId": "user456",
+  "description": "Payment for services"
+}
+
+### Get All Payments
+GET http://localhost:8080/api/v1/payments
+
+### Get Payment by ID
+GET http://localhost:8080/api/v1/payments/1
+
+### Filter by Status
+GET http://localhost:8080/api/v1/payments?status=PENDING
+
+### Update Payment Status
+PATCH http://localhost:8080/api/v1/payments/3/status?status=COMPLETED
+
+### Test Validation Error
+POST http://localhost:8080/api/v1/payments
+Content-Type: application/json
+
+{
+  "amount": -10,
+  "currency": "US",
+  "senderId": "",
+  "recipientId": "user456"
+}
+
+### Test Not Found
+GET http://localhost:8080/api/v1/payments/999
+
+### Delete Payment
+DELETE http://localhost:8080/api/v1/payments/3
