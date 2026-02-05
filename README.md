@@ -533,7 +533,6 @@ This project follows:
 
 **Kaylee McLaren**
 
-- GitHub: [@KayleeMcLaren](https://github.com/KayleeMcLaren)
 - LinkedIn: [Kaylee McLaren](https://www.linkedin.com/in/software-dev-kaylee-mclaren/)
 - Email: mclaren.kaylee@gmail.com
 
