@@ -624,6 +624,3 @@ This project follows:
 - SOLID principles
 
 ---
-
-
-*Last Updated: February 2026*
