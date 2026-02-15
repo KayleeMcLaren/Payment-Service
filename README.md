@@ -1,12 +1,68 @@
 # Payment Service API
 
-A production-ready RESTful payment processing microservice built with Kotlin and Spring Boot, demonstrating modern backend development practices including event-driven architecture, comprehensive testing, and clean code principles.
+A RESTful payment processing microservice built with Kotlin and Spring Boot, demonstrating modern backend development patterns for enterprise fintech applications.
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.9.25-blue.svg)](https://kotlinlang.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.10-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-##  Overview
+---
+
+## Context: Why Kotlin?
+
+**Short answer:** Built to demonstrate proficiency with JVM-based microservices architecture commonly used in enterprise fintech.
+
+**Longer answer:** My production experience is Python/AWS serverless. I built this project to understand:
+- **Dependency Injection:** How Spring manages object lifecycle vs Python's explicit wiring
+- **ORM Patterns:** JPA/Hibernate vs Python's SQLAlchemy/raw SQL
+- **Type Safety:** Kotlin's null safety and type system vs Python's dynamic typing  
+- **Testing Patterns:** MockK and Spring Test vs Python's Pytest
+- **Enterprise Patterns:** Service-repository separation, transaction management, REST best practices
+
+**Target audience:** Companies using Kotlin/Java stacks (e.g., JUMO, enterprise financial services) who want to see I can work outside my primary Python ecosystem.
+
+**Time investment:** Built in 3 weeks (January 2025) as targeted learning for specific job opportunities.
+
+### What I Learned
+
+**Kotlin Strengths:**
+- Null safety catches bugs at compile time that would be runtime errors in Python
+- Data classes eliminate boilerplate
+- Coroutines (not used here, but studied) offer better async patterns than Python threads
+
+**Spring Boot Insights:**
+- Auto-configuration is powerful but requires understanding of annotations and lifecycle
+- Dependency injection enforces better architecture than Python's "import everything"
+- JPA/Hibernate is more "magical" than SQLAlchemy—trades explicitness for convenience
+
+**Trade-offs I noticed:**
+- JVM startup time is slower than Python (matters for Lambda, less for traditional apps)
+- IDE support (IntelliJ) is exceptional—refactoring is safer than in Python
+- Testing with Spring context is verbose compared to Pytest, but mocking is type-safe
+
+**Verdict:** For high-throughput, long-running services with complex business logic, I'd choose Kotlin/Spring. For rapid prototyping, serverless functions, or data processing, I'd stick with Python. Both have their place.
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Design Decisions](#design-decisions)
+- [Architecture](#architecture)
+- [My Role & Learning Context](#my-role--learning-context)
+- [Getting Started](#getting-started)
+- [API Endpoints](#api-endpoints)
+- [Testing](#testing)
+- [Production Readiness](#production-readiness)
+- [Python vs Kotlin Comparison](#python-vs-kotlin-a-developers-perspective)
+- [Learning Outcomes](#learning-outcomes)
+- [Author](#author)
+
+---
+
+## Overview
 
 This microservice provides a complete payment processing solution with features including:
 
@@ -21,21 +77,7 @@ Built as a portfolio project to demonstrate proficiency in Kotlin, Spring Boot, 
 
 ---
 
-##  Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-- [API Endpoints](#api-endpoints)
-- [Testing](#testing)
-- [Project Structure](#project-structure)
-- [Development](#development)
-- [Author](#author)
-
----
-
-##  Features
+## Features
 
 ### Core Functionality
 - ✅ Create payments with validation
@@ -59,7 +101,7 @@ Built as a portfolio project to demonstrate proficiency in Kotlin, Spring Boot, 
 
 ---
 
-##  Tech Stack
+## Tech Stack
 
 ### Core Technologies
 - **Language:** Kotlin 1.9.25
@@ -89,7 +131,41 @@ Built as a portfolio project to demonstrate proficiency in Kotlin, Spring Boot, 
 
 ---
 
-##  Architecture
+## Design Decisions
+
+### Why H2 In-Memory Database?
+
+**For this demo:** H2 allows the project to run with zero external dependencies. Clone, run, test—no PostgreSQL setup required.
+
+**For production:** Would use PostgreSQL or MySQL with proper connection pooling, migrations with Flyway/Liquibase, and database backups.
+
+### Why Service-Repository Pattern?
+
+Separates business logic (PaymentService) from data access (PaymentRepository). This makes testing easier—I can mock the repository to test business logic in isolation.
+
+**Alternative considered:** Direct repository access from controllers. Rejected because it couples HTTP layer to database, making refactoring harder.
+
+### Why REST Instead of GraphQL?
+
+Payment operations map naturally to REST verbs (POST to create, GET to retrieve, PATCH to update). GraphQL's flexibility isn't needed for this simple domain.
+
+**When I'd use GraphQL:** Client-facing APIs with complex query needs (e.g., mobile apps requesting varied data shapes).
+
+### State Management: Payment Lifecycle
+
+Payments follow a strict state machine:
+```
+PENDING → PROCESSING → COMPLETED
+                    ↘ FAILED → CANCELLED
+```
+
+The service validates state transitions—you can't mark a COMPLETED payment as FAILED. This prevents data corruption from invalid state changes.
+
+**Why this matters in production:** Financial systems must maintain data integrity. State machines enforce valid transitions at the application level, even if database constraints don't.
+
+---
+
+## Architecture
 
 ### Layered Architecture
 ```
@@ -152,7 +228,34 @@ com.kayleemclaren.payment
 
 ---
 
-##  Getting Started
+## My Role & Learning Context
+
+**Solo project:** I built this entire microservice independently to learn JVM-based backend patterns.
+
+**Why this project exists:** 
+- My day job experience was Python/Lambda serverless
+- Many fintech companies use Kotlin/Java with Spring Boot
+- I wanted to demonstrate I can learn new stacks quickly
+- Specific opportunity (JUMO) required Kotlin experience
+
+**What I already knew (transferable):**
+- REST API design principles (from Python work)
+- Testing patterns (similar philosophy, different tools)
+- Service-repository pattern (same in any language)
+- Database persistence concepts
+
+**What I learned specifically for this:**
+- Kotlin syntax and language features
+- Spring Boot framework and annotations
+- JPA/Hibernate ORM patterns
+- Gradle build system
+- MockK mocking library
+
+**Result:** Built production-ready microservice with comprehensive tests in 3 weeks, demonstrating rapid technology adoption.
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
@@ -164,20 +267,20 @@ com.kayleemclaren.payment
 
 1. **Clone the repository**
 ```bash
-   git clone https://github.com/KayleeMcLaren/payment-service.git
-   cd payment-service
+git clone https://github.com/KayleeMcLaren/payment-service.git
+cd payment-service
 ```
 
 2. **Build the project**
 ```bash
-   ./gradlew build
-   # On Windows: .\gradlew.bat build
+./gradlew build
+# On Windows: .\gradlew.bat build
 ```
 
 3. **Run the application**
 ```bash
-   ./gradlew bootRun
-   # On Windows: .\gradlew.bat bootRun
+./gradlew bootRun
+# On Windows: .\gradlew.bat bootRun
 ```
 
 4. **Verify it's running**
@@ -219,8 +322,6 @@ http://localhost:8080/api/v1/payments
 | PATCH | `/api/v1/payments/{id}/status?status=COMPLETED` | Update status | None | 200 OK / 404 |
 | DELETE | `/api/v1/payments/{id}` | Delete payment | None | 204 No Content / 404 |
 
----
-
 ### Detailed API Examples
 
 #### 1. Create Payment
@@ -254,8 +355,6 @@ Content-Type: application/json
 }
 ```
 
----
-
 #### 2. Get All Payments
 
 **Request:**
@@ -276,43 +375,15 @@ GET /api/v1/payments
     "description": "Payment for services",
     "createdAt": "2024-01-27T10:30:00",
     "updatedAt": "2024-01-27T10:30:00"
-  },
-  {
-    "id": 2,
-    "amount": 250.75,
-    "currency": "EUR",
-    "senderId": "user789",
-    "recipientId": "user123",
-    "status": "COMPLETED",
-    "description": "Invoice payment",
-    "createdAt": "2024-01-27T11:00:00",
-    "updatedAt": "2024-01-27T11:30:00"
   }
 ]
 ```
-
----
 
 #### 3. Get Payment by ID
 
 **Request:**
 ```http
 GET /api/v1/payments/1
-```
-
-**Response (200 OK):**
-```json
-{
-  "id": 1,
-  "amount": 100.50,
-  "currency": "USD",
-  "senderId": "user123",
-  "recipientId": "user456",
-  "status": "PENDING",
-  "description": "Payment for services",
-  "createdAt": "2024-01-27T10:30:00",
-  "updatedAt": "2024-01-27T10:30:00"
-}
 ```
 
 **Response (404 Not Found):**
@@ -324,30 +395,7 @@ GET /api/v1/payments/1
 }
 ```
 
----
-
-#### 4. Filter Payments by Status
-
-**Request:**
-```http
-GET /api/v1/payments?status=PENDING
-```
-
-**Response (200 OK):**
-```json
-[
-  {
-    "id": 1,
-    "amount": 100.50,
-    "status": "PENDING",
-    ...
-  }
-]
-```
-
----
-
-#### 5. Update Payment Status
+#### 4. Update Payment Status
 
 **Request:**
 ```http
@@ -361,26 +409,9 @@ PATCH /api/v1/payments/1/status?status=COMPLETED
   "amount": 100.50,
   "currency": "USD",
   "status": "COMPLETED",
-  "updatedAt": "2024-01-27T12:30:00",
-  ...
+  "updatedAt": "2024-01-27T12:30:00"
 }
 ```
-
----
-
-#### 6. Delete Payment
-
-**Request:**
-```http
-DELETE /api/v1/payments/1
-```
-
-**Response:**
-```
-204 No Content
-```
-
----
 
 ### Validation Rules
 
@@ -392,18 +423,9 @@ DELETE /api/v1/payments/1
 | **recipientId** | Required, not blank | "Recipient ID is required" |
 | **description** | Optional, max 500 chars | N/A |
 
-**Example Validation Error (400 Bad Request):**
-```json
-{
-  "status": 400,
-  "message": "Validation failed: amount: Amount must be greater than 0, currency: Currency must be 3 characters (e.g., USD, EUR)",
-  "timestamp": "2024-01-27T10:30:00"
-}
-```
-
 ---
 
-##  Testing
+## Testing
 
 ### Test Coverage
 
@@ -426,59 +448,62 @@ Test Summary
     └── Context loads ✓
 ```
 
-### Running Tests
-```bash
-# Run all tests with output
-./gradlew clean test
-
-# View HTML report
-open build/reports/tests/test/index.html
-```
-
 ### Manual API Testing
 
 See [TESTING.md](TESTING.md) for comprehensive manual testing guide with Postman/curl examples.
 
 ---
 
-##  Project Structure
-```
-payment-service/
-├── src/
-│   ├── main/
-│   │   ├── kotlin/com/kayleemclaren/payment/
-│   │   │   ├── controller/
-│   │   │   │   ├── PaymentController.kt
-│   │   │   │   └── GlobalExceptionHandler.kt
-│   │   │   ├── service/
-│   │   │   │   ├── PaymentService.kt
-│   │   │   │   └── PaymentNotFoundException.kt
-│   │   │   ├── repository/
-│   │   │   │   └── PaymentRepository.kt
-│   │   │   ├── model/
-│   │   │   │   ├── Payment.kt
-│   │   │   │   └── PaymentStatus.kt
-│   │   │   ├── dto/
-│   │   │   │   └── PaymentDto.kt
-│   │   │   └── PaymentServiceApplication.kt
-│   │   └── resources/
-│   │       └── application.properties
-│   └── test/
-│       └── kotlin/com/kayleemclaren/payment/
-│           ├── service/
-│           │   └── PaymentServiceTest.kt
-│           └── PaymentServiceApplicationTests.kt
-├── build.gradle.kts
-├── settings.gradle.kts
-├── gradlew
-├── gradlew.bat
-├── README.md
-└── TESTING.md
-```
+## ⚠️ Production Readiness: What's Missing
+
+**This is a demonstration project showing core patterns, not production software.**
+
+**What's included:**
+- ✅ Core business logic with state management  
+- ✅ Input validation and error handling  
+- ✅ Comprehensive unit tests (100% success rate)  
+- ✅ Clean architecture (service-repository pattern)  
+- ✅ REST best practices  
+
+**What would be needed for production:**
+- ❌ Actual database (PostgreSQL) with migrations  
+- ❌ Security (authentication, authorization, rate limiting)  
+- ❌ Observability (structured logging, metrics, tracing)  
+- ❌ API documentation (OpenAPI/Swagger)  
+- ❌ Containerization (Dockerfile for deployment)  
+- ❌ Integration tests (TestContainers with real DB)  
+- ❌ CI/CD pipeline (GitHub Actions for automated testing)  
+
+**For hiring managers:** The architecture and patterns here are production-ready. The implementation demonstrates I understand Spring Boot and Kotlin. In a real production environment, I'd add operational maturity (monitoring, security hardening, documentation) as part of normal development process.
 
 ---
 
-##  Development
+## Python vs Kotlin: A Developer's Perspective
+
+Having built production systems in Python and this project in Kotlin, here's my honest comparison:
+
+### Python Wins
+- **Speed of development:** Faster iteration for prototypes and scripts
+- **Serverless fit:** Cold start times make Python better for Lambda
+- **Data processing:** Pandas, NumPy make data work simpler
+- **Simplicity:** Less boilerplate, more readable for simple tasks
+
+### Kotlin Wins
+- **Type safety:** Catch bugs at compile time
+- **Performance:** JVM is faster for CPU-intensive work
+- **Null safety:** Eliminates entire class of runtime errors
+- **Tooling:** IntelliJ IDEA is exceptional
+
+### When I'd choose each:
+- **Python:** Serverless functions, data processing, rapid prototypes, scripting
+- **Kotlin/Spring:** High-throughput services, complex business logic, long-running processes
+- **Both work:** REST APIs, microservices (comes down to team preference and ecosystem)
+
+**For this project:** Kotlin was the right choice to demonstrate JVM competency. For my serverless ecosystem project, Python was the right choice for Lambda optimization.
+
+---
+
+## Development
 
 ### H2 Database Console
 
@@ -519,7 +544,78 @@ spring.jpa.show-sql=true
 spring.h2.console.enabled=true
 ```
 
-### Code Style
+---
+
+## Learning Outcomes
+
+**What this project taught me:**
+
+1. **JVM ecosystem is mature:** Tooling, libraries, and community support are excellent
+2. **Spring Boot is opinionated:** This is good—forces consistency, but requires learning "the Spring way"
+3. **Type safety is worth the verbosity:** Catching errors at compile time saves debugging time
+4. **Testing culture is strong:** Spring Test + MockK make testing feel built-in, not bolted-on
+5. **Kotlin is pragmatic:** Takes best parts of Java, removes cruft, adds modern features
+
+**How this complements my Python experience:**
+
+I now understand both:
+- **Python/Serverless:** Best for event-driven, auto-scaling, pay-per-use systems
+- **Kotlin/Spring:** Best for traditional microservices with consistent load
+
+This makes me a more versatile engineer—I can recommend the right tool for the problem, not just use what I know.
+
+**Confidence level:**
+- ✅ Can build production features in Kotlin/Spring with team support
+- ✅ Can review Kotlin code and participate in architecture discussions
+- ⚠️ Would need mentorship for complex JVM performance tuning or advanced Spring features
+- ⚠️ Not yet proficient in reactive programming (WebFlux, Kotlin coroutines)
+
+**Next steps for deeper Kotlin/Spring learning:**
+- Add caching with Redis
+- Implement WebSocket endpoint for real-time updates
+- Deploy to Kubernetes with proper health checks
+- Add API gateway (Spring Cloud Gateway)
+
+---
+
+## Related Projects
+
+See my [Serverless Fintech Ecosystem](https://github.com/KayleeMcLaren/Serverless-Fintech-Ecosystem) for a complete Python/AWS microservices platform with event-driven architecture, Step Functions workflows, and Terraform IaC.
+
+**Together, these projects show:**
+- Python + AWS serverless expertise (Ecosystem project)
+- Kotlin + Spring Boot capability (This project)
+- Understanding of both paradigms (Serverless vs traditional microservices)
+
+---
+
+## Author
+
+**Kaylee McLaren**
+
+- LinkedIn: [Kaylee McLaren](https://www.linkedin.com/in/software-dev-kaylee-mclaren/)
+- Email: mclaren.kaylee@gmail.com
+- GitHub: [github.com/KayleeMcLaren](https://github.com/KayleeMcLaren)
+- Portfolio: [Live Demo](https://d18l23eogq3lrf.cloudfront.net)
+
+---
+
+## License
+
+This project is created for portfolio demonstration purposes.
+
+---
+
+## Acknowledgments
+
+- Built with [Spring Boot](https://spring.io/projects/spring-boot)
+- Testing with [MockK](https://mockk.io/)
+- Inspired by modern fintech architecture patterns
+- Created as part of learning journey in backend development
+
+---
+
+## Code Style
 
 This project follows:
 - [Kotlin Coding Conventions](https://kotlinlang.org/docs/coding-conventions.html)
@@ -529,40 +625,5 @@ This project follows:
 
 ---
 
-##  Author
-
-**Kaylee McLaren**
-
-- LinkedIn: [Kaylee McLaren](https://www.linkedin.com/in/software-dev-kaylee-mclaren/)
-- Email: mclaren.kaylee@gmail.com
-
----
-
-##  License
-
-This project is created for portfolio demonstration purposes.
-
----
-
-##  Acknowledgments
-
-- Built with [Spring Boot](https://spring.io/projects/spring-boot)
-- Testing with [MockK](https://mockk.io/)
-- Inspired by modern fintech architecture patterns
-- Created as part of learning journey in backend development
-
----
-
-##  Learning Resources
-
-This project demonstrates concepts from:
-- Spring Boot Official Documentation
-- Kotlin Language Guide
-- RESTful API Design Best Practices
-- Test-Driven Development principles
-- Clean Architecture patterns
-
-
----
 
 *Last Updated: February 2026*
