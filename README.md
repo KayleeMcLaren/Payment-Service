@@ -21,7 +21,7 @@ A RESTful payment processing microservice built with Kotlin and Spring Boot, dem
 
 **Target audience:** Companies using Kotlin/Java stacks (e.g., JUMO, enterprise financial services) who want to see I can work outside my primary Python ecosystem.
 
-**Time investment:** Built in 3 weeks (January 2025) as targeted learning for specific job opportunities.
+**Time investment:** Built in 3 weeks (January 2025) as targeted learning for specific job opportunities. This was immediately after completing my Serverless Fintech Ecosystem project, demonstrating ability to quickly adopt new technology stacks.
 
 ### What I Learned
 
