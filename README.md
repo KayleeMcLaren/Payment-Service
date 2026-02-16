@@ -474,7 +474,7 @@ See [TESTING.md](TESTING.md) for comprehensive manual testing guide with Postman
 - ❌ Integration tests (TestContainers with real DB)  
 - ❌ CI/CD pipeline (GitHub Actions for automated testing)  
 
-**For hiring managers:** The architecture and patterns here are production-ready. The implementation demonstrates I understand Spring Boot and Kotlin. In a real production environment, I'd add operational maturity (monitoring, security hardening, documentation) as part of normal development process.
+The architecture and patterns here are production-ready. The implementation demonstrates I understand Spring Boot and Kotlin. In a real production environment, I'd add operational maturity (monitoring, security hardening, documentation) as part of normal development process.
 
 ---
 
